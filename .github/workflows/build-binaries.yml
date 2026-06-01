@@ -105,7 +105,7 @@ jobs:
           $MakevarsPath = "$env:USERPROFILE\.R\Makevars.win"
           New-Item -Path (Split-Path $MakevarsPath) -ItemType Directory -Force
           @"
-          CXX14FLAGS=-O1 -g0
+          CXX14FLAGS=-O0 -g0 -Wa,-mbig-obj
           "@ | Out-File -FilePath $MakevarsPath -Encoding ASCII
         shell: powershell
 
