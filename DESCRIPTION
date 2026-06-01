@@ -1,0 +1,40 @@
+Package: bayescoveragedeploy
+Title: Precompiled Stan Models for Bayesian Coverage Model Deployment
+Version: 0.1.0
+Authors@R: c(
+    person("Leontine", "Alkema", , "lalkema@umass.edu", role = c("aut", "cre"))
+    )
+Description: Provides precompiled Stan models for fitting local country-level
+    Bayesian hierarchical transition models for health coverage indicators.
+    This package uses the rstan backend with precompiled models for users
+    without C++ compilers. All core functionality is provided by the
+    bayescoveragemodel package.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Biarch: true
+Depends:
+    R (>= 3.5.0)
+Imports:
+    bayescoveragemodel,
+    methods,
+    Rcpp (>= 0.12.0),
+    RcppParallel (>= 5.0.1),
+    rstan (>= 2.26.0),
+    rstantools (>= 2.5.0)
+LinkingTo:
+    BH (>= 1.66.0),
+    Rcpp (>= 0.12.0),
+    RcppEigen (>= 0.3.3.3.0),
+    RcppParallel (>= 5.0.1),
+    rstan (>= 2.26.0),
+    StanHeaders (>= 2.26.0)
+Suggests:
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+SystemRequirements: GNU make
+URL: https://github.com/AlkemaLab/bayescoveragedeploy
+BugReports: https://github.com/AlkemaLab/bayescoveragedeploy/issues
+Config/testthat/edition: 3
