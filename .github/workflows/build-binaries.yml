@@ -65,19 +65,28 @@ jobs:
 
       - name: Install GitHub dependencies
         run: |
-          remotes::install_github("AlkemaLab/localhierarchy", upgrade = "never")
-          remotes::install_github("AlkemaLab/bayescoveragemodel@dev_rstanfordeploy", upgrade = "never")
+          cat("Installing localhierarchy...\n")
+          remotes::install_github("AlkemaLab/localhierarchy", upgrade = "never", force = TRUE, dependencies = TRUE)
+          cat("Installing bayescoveragemodel...\n")
+          remotes::install_github("AlkemaLab/bayescoveragemodel@dev_rstanfordeploy", upgrade = "never", force = TRUE, dependencies = TRUE)
+          cat("\nVerifying installations:\n")
+          cat("localhierarchy installed:", "localhierarchy" %in% rownames(installed.packages()), "\n")
+          cat("bayescoveragemodel installed:", "bayescoveragemodel" %in% rownames(installed.packages()), "\n")
+          if (!"bayescoveragemodel" %in% rownames(installed.packages())) {
+            stop("bayescoveragemodel installation failed!")
+          }
         shell: Rscript {0}
 
-      - name: Install R package dependencies
+      - name: Install remaining R dependencies
         run: |
-          # Install other dependencies, excluding bayescoveragemodel which is already installed
-          deps <- remotes::dev_package_deps(dependencies = TRUE)
-          deps_to_install <- deps$package[!deps$package %in% c("bayescoveragemodel", "localhierarchy")]
-          if (length(deps_to_install) > 0) {
-            install.packages(deps_to_install)
-          }
           install.packages(c("devtools", "pkgbuild", "desc"))
+          # Install other CRAN dependencies
+          deps <- remotes::dev_package_deps(dependencies = TRUE)
+          cran_deps <- deps$package[deps$diff != 0 & !deps$package %in% c("bayescoveragemodel", "localhierarchy")]
+          if (length(cran_deps) > 0) {
+            cat("Installing CRAN dependencies:", paste(cran_deps, collapse = ", "), "\n")
+            install.packages(cran_deps)
+          }
         shell: Rscript {0}
 
       - name: Configure C++ toolchain for Stan (macOS)
@@ -99,6 +108,20 @@ jobs:
           CXX14FLAGS=-O3 -march=native -mtune=native
           "@ | Out-File -FilePath $MakevarsPath -Encoding ASCII
         shell: powershell
+
+      - name: Verify dependencies before compilation
+        run: |
+          cat("Checking if bayescoveragemodel can be loaded...\n")
+          tryCatch({
+            library(bayescoveragemodel)
+            cat("SUCCESS: bayescoveragemodel loaded\n")
+          }, error = function(e) {
+            cat("ERROR loading bayescoveragemodel:", conditionMessage(e), "\n")
+            stop("Cannot load bayescoveragemodel")
+          })
+          cat("\nInstalled packages:\n")
+          print(rownames(installed.packages()))
+        shell: Rscript {0}
 
       - name: Compile Stan models
         run: |
