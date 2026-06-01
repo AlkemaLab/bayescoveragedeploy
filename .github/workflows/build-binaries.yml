@@ -99,50 +99,17 @@ jobs:
           EOF
         shell: bash
 
-      - name: Configure C++ toolchain for Stan (Windows)
+      - name: Verify Makevars.win (Windows)
         if: runner.os == 'Windows'
         run: |
-          $MakevarsPath = "$env:USERPROFILE\.R\Makevars.win"
-          New-Item -Path (Split-Path $MakevarsPath) -ItemType Directory -Force
-          "CXX14FLAGS=-O0 -Wa,-mbig-obj" | Out-File -FilePath $MakevarsPath -Encoding ASCII
-          "CXX11FLAGS=-O0 -Wa,-mbig-obj" | Out-File -FilePath $MakevarsPath -Encoding ASCII -Append
-          "CXXFLAGS=-O0 -Wa,-mbig-obj" | Out-File -FilePath $MakevarsPath -Encoding ASCII -Append
-          "PKG_CXXFLAGS=-Wa,-mbig-obj" | Out-File -FilePath $MakevarsPath -Encoding ASCII -Append
-          "SHLIB_CXXLDFLAGS=-Wl,--allow-multiple-definition" | Out-File -FilePath $MakevarsPath -Encoding ASCII -Append
-          Write-Host "=== Makevars.win contents ==="
-          Get-Content $MakevarsPath
-          Write-Host "=== End Makevars.win ==="
-          Write-Host "Makevars.win location: $MakevarsPath"
-          Write-Host "`n=== Compiler info ==="
-          g++ --version
-        shell: powershell
-
-      - name: Verify and create package Makevars (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          cat("Checking Makevars.win configuration...\n")
-
-          # Check user-level Makevars
-          makevars_path <- file.path(Sys.getenv("USERPROFILE"), ".R", "Makevars.win")
-          cat("User Makevars.win path:", makevars_path, "\n")
-          cat("File exists:", file.exists(makevars_path), "\n")
-          if (file.exists(makevars_path)) {
-            cat("\nUser Makevars.win contents:\n")
-            cat(readLines(makevars_path), sep = "\n")
-          }
-
-          # Also create package-level Makevars.win as backup
+          cat("Checking package Makevars.win...\n")
           pkg_makevars <- file.path("src", "Makevars.win")
-          cat("\nCreating package-level Makevars.win at:", pkg_makevars, "\n")
-          writeLines(c(
-            "CXX14FLAGS=-O0 -Wa,-mbig-obj",
-            "CXX11FLAGS=-O0 -Wa,-mbig-obj",
-            "CXXFLAGS=-O0 -Wa,-mbig-obj",
-            "PKG_CXXFLAGS=-Wa,-mbig-obj"
-          ), pkg_makevars)
-
-          cat("\nPackage Makevars.win contents:\n")
-          cat(readLines(pkg_makevars), sep = "\n")
+          if (file.exists(pkg_makevars)) {
+            cat("\nPackage Makevars.win contents:\n")
+            cat(readLines(pkg_makevars), sep = "\n")
+          } else {
+            stop("Makevars.win not found!")
+          }
         shell: Rscript {0}
 
       - name: Verify dependencies before compilation
@@ -159,12 +126,10 @@ jobs:
           print(rownames(installed.packages()))
         shell: Rscript {0}
 
-      - name: Compile Stan models (with verbose output)
+      - name: Compile Stan models
         run: |
-          cat("Starting compilation with verbose output...\n")
-          # Set verbose compilation to see actual compiler commands
-          Sys.setenv(MAKEFLAGS = "-d")
-          pkgbuild::compile_dll(force = TRUE, debug = TRUE, quiet = FALSE)
+          cat("Starting compilation...\n")
+          pkgbuild::compile_dll(force = TRUE)
         shell: Rscript {0}
 
       - name: Build source package
