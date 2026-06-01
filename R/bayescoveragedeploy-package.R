@@ -18,7 +18,7 @@
 #' The main user-facing function is \code{\link{fit_local_model}}.
 #'
 #'
-#' @docType package
+#' @docType _PACKAGE
 #' @name bayescoveragedeploy-package
 #' @aliases bayescoveragedeploy
 #' @useDynLib bayescoveragedeploy, .registration = TRUE

@@ -40,4 +40,4 @@ BugReports: https://github.com/AlkemaLab/bayescoveragedeploy/issues
 Config/testthat/edition: 3
 Remotes:
     AlkemaLab/localhierarchy,
-    AlkemaLab/bayescoveragemodel@dev_rstanfordeploy
+    AlkemaLab/bayescoveragemodel
