@@ -38,3 +38,6 @@ SystemRequirements: GNU make
 URL: https://github.com/AlkemaLab/bayescoveragedeploy
 BugReports: https://github.com/AlkemaLab/bayescoveragedeploy/issues
 Config/testthat/edition: 3
+Remotes:
+    AlkemaLab/localhierarchy,
+    AlkemaLab/bayescoveragemodel@dev_rstanfordeploy
