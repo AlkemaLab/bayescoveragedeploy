@@ -18,7 +18,6 @@
 #' The main user-facing function is \code{\link{fit_local_model}}.
 #'
 #'
-#' @docType PACKAGE
 #' @name bayescoveragedeploy-package
 #' @aliases bayescoveragedeploy
 #' @useDynLib bayescoveragedeploy, .registration = TRUE
@@ -31,4 +30,4 @@
 #' @references
 #' Stan Development Team (NA). RStan: the R interface to Stan. R package version 2.32.7. https://mc-stan.org
 #'
-NULL
+"_PACKAGE"
