@@ -1,0 +1,159 @@
+name: Build Binary Packages
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.config.os }}
+    name: ${{ matrix.config.os }} (R-${{ matrix.config.r }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {os: macos-latest, r: 'release'}
+          - {os: windows-latest, r: 'release'}
+
+    env:
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: ${{ matrix.config.r }}
+          use-public-rspm: true
+
+      - name: Install Rtools (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          choco install rtools -y --no-progress --force --version=4.0.0.20220206
+        shell: powershell
+
+      - name: Setup Pandoc
+        uses: r-lib/actions/setup-pandoc@v2
+
+      - name: Query R package dependencies
+        run: |
+          install.packages('remotes')
+          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github-depends.Rds", version = 2)
+          writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github-R-version")
+        shell: Rscript {0}
+
+      - name: Cache R packages
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: ${{ runner.os }}-${{ hashFiles('.github-R-version') }}-1-${{ hashFiles('.github-depends.Rds') }}
+          restore-keys: ${{ runner.os }}-${{ hashFiles('.github-R-version') }}-1-
+
+      - name: Install system dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install pkg-config
+
+      - name: Install R package dependencies
+        run: |
+          remotes::install_deps(dependencies = TRUE)
+          install.packages(c("devtools", "pkgbuild", "desc"))
+        shell: Rscript {0}
+
+      - name: Configure C++ toolchain for Stan (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          mkdir -p ~/.R
+          cat <<EOF > ~/.R/Makevars
+          CXX14FLAGS=-O3 -march=native -mtune=native
+          CXX14=clang++
+          EOF
+        shell: bash
+
+      - name: Configure C++ toolchain for Stan (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          $MakevarsPath = "$env:USERPROFILE\.R\Makevars.win"
+          New-Item -Path (Split-Path $MakevarsPath) -ItemType Directory -Force
+          @"
+          CXX14FLAGS=-O3 -march=native -mtune=native
+          "@ | Out-File -FilePath $MakevarsPath -Encoding ASCII
+        shell: powershell
+
+      - name: Compile Stan models
+        run: |
+          pkgbuild::compile_dll(force = TRUE)
+        shell: Rscript {0}
+
+      - name: Build source package
+        run: |
+          dir.create("build", showWarnings = FALSE)
+          source_pkg <- devtools::build(path = "build", binary = FALSE, vignettes = FALSE)
+          cat("SOURCE_PKG=", source_pkg, "\n", file = Sys.getenv("GITHUB_ENV"), append = TRUE, sep = "")
+        shell: Rscript {0}
+
+      - name: Build binary package
+        run: |
+          binary_pkg <- devtools::build(path = "build", binary = TRUE, vignettes = FALSE)
+          cat("BINARY_PKG=", binary_pkg, "\n", file = Sys.getenv("GITHUB_ENV"), append = TRUE, sep = "")
+          cat("Built binary package:", binary_pkg, "\n")
+          cat("Size:", format(file.size(binary_pkg) / 1024^2, digits = 2), "MB\n")
+        shell: Rscript {0}
+
+      - name: Show package info
+        run: |
+          echo "Source package: ${{ env.SOURCE_PKG }}"
+          echo "Binary package: ${{ env.BINARY_PKG }}"
+
+      - name: Upload binary package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: binary-${{ matrix.config.os }}
+          path: ${{ env.BINARY_PKG }}
+          retention-days: 90
+
+      - name: Upload source package artifact
+        if: runner.os == 'macOS'
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-package
+          path: ${{ env.SOURCE_PKG }}
+          retention-days: 90
+
+      - name: Test binary installation
+        run: |
+          install.packages("${{ env.BINARY_PKG }}", repos = NULL, type = "binary")
+          library(bayescoveragedeploy)
+          cat("Package loaded successfully!\n")
+        shell: Rscript {0}
+
+      - name: Upload binaries to release
+        if: github.event_name == 'release'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ${{ env.BINARY_PKG }}
+          asset_name: ${{ basename(env.BINARY_PKG) }}
+          asset_content_type: application/octet-stream
+
+      - name: Upload source to release
+        if: github.event_name == 'release' && runner.os == 'macOS'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ${{ env.SOURCE_PKG }}
+          asset_name: ${{ basename(env.SOURCE_PKG) }}
+          asset_content_type: application/octet-stream
