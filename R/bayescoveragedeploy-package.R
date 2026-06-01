@@ -17,18 +17,6 @@
 #'
 #' The main user-facing function is \code{\link{fit_local_model}}.
 #'
-#' @section Examples:
-#' Comprehensive examples are available in \code{inst/examples/}:
-#' \itemize{
-#'   \item \code{basic_usage.R} - Complete tutorial with all features
-#'   \item \code{deployment_example.R} - Deployment workflow examples
-#'   \item \code{quick_reference.R} - Copy-paste snippets for common tasks
-#' }
-#'
-#' Run examples with:
-#' \preformatted{
-#' source(system.file("examples/basic_usage.R", package = "bayescoveragedeploy"))
-#' }
 #'
 #' @docType package
 #' @name bayescoveragedeploy-package

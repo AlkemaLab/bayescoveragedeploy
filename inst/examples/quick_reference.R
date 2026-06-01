@@ -124,8 +124,8 @@ for (iso in countries) {
 temporal_ests <- fit$posteriors$temporal
 
 # Filter to recent years
-recent <- temporal_ests %>%
-  filter(year >= 2010) %>%
+recent <- temporal_ests |>
+  filter(year >= 2010) |>
   select(iso, year, median, lower, upper)
 
 # Processed data with uncertainty
@@ -148,8 +148,8 @@ bayescoveragemodel::plot_estimates_local_all(fit)
 # Custom plotting with ggplot2
 library(ggplot2)
 
-temporal_ests %>%
-  filter(year >= 2000) %>%
+temporal_ests |>
+  filter(year >= 2000) |>
   ggplot(aes(x = year, y = median)) +
   geom_line() +
   geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.3) +
@@ -165,7 +165,7 @@ temporal_ests %>%
 # Combine results from batch processing
 all_estimates <- bind_rows(
   lapply(names(results), function(iso) {
-    results[[iso]]$posteriors$temporal %>%
+    results[[iso]]$posteriors$temporal |>
       mutate(country = iso)
   })
 )

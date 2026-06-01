@@ -52,17 +52,4 @@ Useful links:
 \author{
 \strong{Maintainer}: Leontine Alkema \email{lalkema@umass.edu}
 
-Authors:
-\itemize{
-  \item Shauna Mooney
-}
-
-Other contributors:
-\itemize{
-  \item Sophia Kagoye [contributor]
-  \item Leonardo Ferreira [contributor]
-  \item Roland Mady [contributor]
-  \item Countdown BayesCoverage Team [contributor]
-}
-
 }

@@ -144,8 +144,8 @@ if (!is.null(fit_production$posteriors)) {
 
   # Show temporal estimates
   if (!is.null(fit_production$posteriors$temporal)) {
-    temporal_ests <- fit_production$posteriors$temporal %>%
-      filter(year >= 2010) %>%
+    temporal_ests <- fit_production$posteriors$temporal |>
+      filter(year >= 2010) |>
       select(iso, year, median, lower, upper)
 
     cat("\nTemporal estimates (2010 onwards):\n")

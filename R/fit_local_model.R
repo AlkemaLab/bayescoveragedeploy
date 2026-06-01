@@ -93,8 +93,7 @@ fit_local_model <- function(survey_df,
   # - All data processing and logic from parent
   # - Precompiled model from this package
   # - Force rstan backend and skip compilation
-  #bayescoveragemodel::
-  fit_model(
+  bayescoveragemodel::fit_model(
     survey_df = survey_df,
     routine_df = routine_df,
     iso_select = iso_select,
