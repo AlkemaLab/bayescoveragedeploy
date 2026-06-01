@@ -2,7 +2,7 @@ Package: bayescoveragedeploy
 Title: Precompiled Stan Models for Bayesian Coverage Model Deployment
 Version: 0.1.0
 Authors@R: c(
-    person("Leontine", "Alkema", , "lalkema@umass.edu", role = c("aut", "cre"))
+    person("Leontine", "Alkema", email = "lalkema@umass.edu", role = c("aut", "cre"))
     )
 Description: Provides precompiled Stan models for fitting local country-level
     Bayesian hierarchical transition models for health coverage indicators.
