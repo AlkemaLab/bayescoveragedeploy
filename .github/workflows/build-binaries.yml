@@ -104,24 +104,15 @@ jobs:
         run: |
           $MakevarsPath = "$env:USERPROFILE\.R\Makevars.win"
           New-Item -Path (Split-Path $MakevarsPath) -ItemType Directory -Force
-
-          # Try multiple flag syntaxes for big-obj format
-          # Using both -Wa,-mbig-obj and direct --big-obj
-          $content = @"
-CXX14FLAGS=-O0 -Wa,-mbig-obj
-CXX11FLAGS=-O0 -Wa,-mbig-obj
-CXXFLAGS=-O0 -Wa,-mbig-obj
-PKG_CXXFLAGS=-Wa,-mbig-obj
-SHLIB_CXXLDFLAGS=-Wl,--allow-multiple-definition
-"@
-          $content | Out-File -FilePath $MakevarsPath -Encoding ASCII
-
+          "CXX14FLAGS=-O0 -Wa,-mbig-obj" | Out-File -FilePath $MakevarsPath -Encoding ASCII
+          "CXX11FLAGS=-O0 -Wa,-mbig-obj" | Out-File -FilePath $MakevarsPath -Encoding ASCII -Append
+          "CXXFLAGS=-O0 -Wa,-mbig-obj" | Out-File -FilePath $MakevarsPath -Encoding ASCII -Append
+          "PKG_CXXFLAGS=-Wa,-mbig-obj" | Out-File -FilePath $MakevarsPath -Encoding ASCII -Append
+          "SHLIB_CXXLDFLAGS=-Wl,--allow-multiple-definition" | Out-File -FilePath $MakevarsPath -Encoding ASCII -Append
           Write-Host "=== Makevars.win contents ==="
           Get-Content $MakevarsPath
           Write-Host "=== End Makevars.win ==="
           Write-Host "Makevars.win location: $MakevarsPath"
-
-          # Also check g++ version and capabilities
           Write-Host "`n=== Compiler info ==="
           g++ --version
         shell: powershell
