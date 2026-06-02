@@ -89,7 +89,6 @@ fit_local_model <- function(survey_df,
   # Get precompiled model from this package
   precompiled_model <- get_precompiled_model(model_name)
 
-
   # Call parent package's fit_model with:
   # - All data processing and logic from parent
   # - Precompiled model from this package
