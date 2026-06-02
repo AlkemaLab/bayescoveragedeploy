@@ -93,7 +93,7 @@ fit_local_model <- function(survey_df,
   # - Force rstan backend and skip compilation
   bayescoveragemodel::fit_model(
     survey_df = survey_df,
-    routine_df = routine_df,
+    routine_data = routine_df,
     iso_select = iso_select,
     runstep = "local_national",
     backend = "rstan",
