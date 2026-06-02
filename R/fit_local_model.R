@@ -77,8 +77,6 @@ fit_local_model <- function(survey_df,
                             max_treedepth = 14,
                             ...) {
 
-  # Load global fit from parent package
-  global_fit <- get_global_fit(indicator)
 
   # Determine which precompiled model to use
   model_name <- determine_model_variant(
@@ -98,7 +96,6 @@ fit_local_model <- function(survey_df,
     routine_df = routine_df,
     iso_select = iso_select,
     runstep = "local_national",
-    global_fit = global_fit,
     backend = "rstan",
     compile_model = FALSE,  # Don't compile - use precompiled
     stan_model = precompiled_model,  # Pass our precompiled model
@@ -113,24 +110,6 @@ fit_local_model <- function(survey_df,
   )
 }
 
-#' Get global fit for indicator
-#'
-#' @param indicator Indicator name
-#' @return Global fit object
-#' @keywords internal
-get_global_fit <- function(indicator) {
-  # Access global fit data from parent package
-  fit_name <- paste0("globalfit1b_", indicator)
-
-  # Try to get from parent package data
-  tryCatch({
-    get(fit_name, envir = asNamespace("bayescoveragemodel"))
-  }, error = function(e) {
-    stop("Global fit for indicator '", indicator, "' not found. ",
-         "Available indicators: anc4, ideliv, vdpt, anc1trimester, ancq8, ",
-         "bfexcl0_5, cci, sba, vmsl", call. = FALSE)
-  })
-}
 
 #' Determine which Stan model variant to use
 #'
