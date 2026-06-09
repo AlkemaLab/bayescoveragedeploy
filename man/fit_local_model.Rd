@@ -10,11 +10,11 @@ fit_local_model(
   indicator = "anc4",
   routine_df = NULL,
   chains = 4,
-  iter_sampling = 200,
-  iter_warmup = 150,
   seed = 1234,
   refresh = 10,
-  adapt_delta = 0.9,
+  iter_sampling = 300,
+  iter_warmup = 150,
+  adapt_delta = 0.95,
   max_treedepth = 14,
   ...
 )
@@ -30,13 +30,13 @@ fit_local_model(
 
 \item{chains}{Number of MCMC chains (default 4)}
 
-\item{iter_sampling}{Number of sampling iterations (default 200)}
-
-\item{iter_warmup}{Number of warmup iterations (default 150)}
-
 \item{seed}{Random seed (default 1234)}
 
 \item{refresh}{Progress update frequency (default 10)}
+
+\item{iter_sampling}{Number of sampling iterations (default 200)}
+
+\item{iter_warmup}{Number of warmup iterations (default 150)}
 
 \item{adapt_delta}{Target acceptance rate (default 0.9)}
 
@@ -91,9 +91,6 @@ fit_prod <- fit_local_model(
 )
 
 # ===== More Examples =====
-# See inst/examples/ for comprehensive examples:
-source(system.file("examples/basic_usage.R", package = "bayescoveragedeploy"))
-source(system.file("examples/deployment_example.R", package = "bayescoveragedeploy"))
-file.edit(system.file("examples/quick_reference.R", package = "bayescoveragedeploy"))
+# See BayesCoverage app!
 }
 }

@@ -1,6 +1,6 @@
 Package: bayescoveragedeploy
 Title: Precompiled Stan Models for Deployment of Bayesian Coverage Model
-Version: 0.1.01
+Version: 0.2
 Authors@R: c(
     person("Leontine", "Alkema", email = "lalkema@umass.edu", role = c("aut", "cre"))
     )

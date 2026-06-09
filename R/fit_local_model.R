@@ -59,21 +59,18 @@
 #' )
 #'
 #' # ===== More Examples =====
-#' # See inst/examples/ for comprehensive examples:
-#' source(system.file("examples/basic_usage.R", package = "bayescoveragedeploy"))
-#' source(system.file("examples/deployment_example.R", package = "bayescoveragedeploy"))
-#' file.edit(system.file("examples/quick_reference.R", package = "bayescoveragedeploy"))
+#' # See BayesCoverage app!
 #' }
 fit_local_model <- function(survey_df,
                             iso_select,
                             indicator = "anc4",
                             routine_df = NULL,
                             chains = 4,
-                            iter_sampling = 200,
-                            iter_warmup = 150,
                             seed = 1234,
                             refresh = 10,
-                            adapt_delta = 0.9,
+                            iter_sampling = 300,
+                            iter_warmup = 150,
+                            adapt_delta = 0.95,
                             max_treedepth = 14,
                             ...) {
 
