@@ -89,12 +89,25 @@ bayescoveragemodel::plot_estimates_local_all(fit)
 
 ### Available indicators
 
-The package includes global fit objects for: - `anc4` - Antenatal care
-(4+ visits) - `ideliv` - Institutional delivery - `vdpt` - DPT
-vaccination - `anc1trimester` - Antenatal care (first trimester) -
-`ancq8` - Antenatal care quality (8+ contacts) - `bfexcl0_5` - Exclusive
-breastfeeding (0-5 months) - `cci` - Comprehensive coverage index -
-`sba` - Skilled birth attendance - `vmsl` - Measles vaccination
+The package includes global fit objects for:
+
+-   `anc4` - Antenatal care (4+ visits)
+
+-   `ideliv` - Institutional delivery
+
+-   `vdpt` - DPT vaccination
+
+-   `anc1trimester` - Antenatal care (first trimester)
+
+-   `ancq8` - Antenatal care quality (8+ contacts)
+
+-   `bfexcl0_5` - Exclusive breastfeeding (0-5 months)
+
+-   `cci` - Comprehensive coverage index
+
+-    `sba` - Skilled birth attendance
+
+-    `vmsl` - Measles vaccination
 
 ### With routine data
 
