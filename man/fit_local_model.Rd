@@ -7,6 +7,7 @@
 fit_local_model(
   survey_df,
   iso_select,
+  subnational = FALSE,
   indicator = "anc4",
   routine_df = NULL,
   chains = 4,
@@ -23,6 +24,8 @@ fit_local_model(
 \item{survey_df}{Survey data (processed via bayescoveragemodel::process_data)}
 
 \item{iso_select}{ISO code for the country}
+
+\item{subnational}{Whether to fit subnational model (default FALSE = local_national)}
 
 \item{indicator}{Indicator name ("anc4", "ideliv", "vdpt", etc.)}
 
