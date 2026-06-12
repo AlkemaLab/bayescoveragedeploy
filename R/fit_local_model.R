@@ -6,6 +6,7 @@
 #'
 #' @param survey_df Survey data (processed via bayescoveragemodel::process_data)
 #' @param iso_select ISO code for the country
+#' @param subnational Whether to fit subnational model (default FALSE = local_national)
 #' @param indicator Indicator name ("anc4", "ideliv", "vdpt", etc.)
 #' @param routine_df Optional tibble with routine data
 #' @param chains Number of MCMC chains (default 4)
@@ -63,6 +64,7 @@
 #' }
 fit_local_model <- function(survey_df,
                             iso_select,
+                            subnational = FALSE,
                             indicator = "anc4",
                             routine_df = NULL,
                             chains = 4,
@@ -78,7 +80,7 @@ fit_local_model <- function(survey_df,
   # Determine which precompiled model to use
   model_name <- determine_model_variant(
     routine_df = routine_df,
-    add_aggregates = FALSE  # local_national doesn't use aggregates
+    add_aggregates = FALSE  # we don't use aggregates in the current models
   )
 
   # Get precompiled model from this package
@@ -92,7 +94,7 @@ fit_local_model <- function(survey_df,
     survey_df = survey_df,
     routine_data = routine_df,
     iso_select = iso_select,
-    runstep = "local_national",
+    runstep = ifelse(subnational, "local_subnational", "local_national"),
     backend = "rstan",
     compile_model = FALSE,  # Don't compile - use precompiled
     stan_model = precompiled_model,  # Pass our precompiled model
